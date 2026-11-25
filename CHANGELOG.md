@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 — native Rust controller
+
+- Replaced Python runtime with a native Rust binary and locked Cargo dependencies.
+- Retained the original C SMC helper without modifications.
+- Added automatic fan safety checks, explicit recovery, signal-aware transactions, native build receipts and configurable keyd application.
+- Preserved normal/eco shortcuts, custom profiles, internal DPMS recovery and exact rollback.
+
 ## 0.1.0 — preview
 
 - Initial named fork, preserved upstream SMC helper and history.

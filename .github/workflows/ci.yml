@@ -7,14 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build upstream SMC helper
-        run: gcc -O2 -Wall -o /tmp/SmcDumpKey SmcDumpKey.c
-      - name: Unit and rollback tests
-        run: python3 -m unittest discover -s tests -v
-      - name: Shell scripts
-        run: shellcheck install.sh uninstall.sh
-      - name: CLI syntax
+      - name: Stable Rust
         run: |
-          python3 -m py_compile prismswitch/prismswitch.py
-          python3 prismswitch/prismswitch.py validate
-          python3 prismswitch/prismswitch.py keyd-config
+          rustup update stable
+          rustup default stable
+          rustup component add rustfmt clippy
+      - name: Rust formatting and warnings
+        run: |
+          cargo fmt --check
+          cargo check --locked
+          cargo clippy --locked --all-targets
+      - name: Rust unit and rollback tests
+        run: cargo test --locked
+      - name: Shell scripts
+        run: shellcheck build.sh install.sh uninstall.sh
+      - name: Native release build
+        run: |
+          ./build.sh
+          (cd target/release && sha256sum -c SHA256SUMS)
+          target/release/prismswitch --version
+          target/release/prismswitch validate
+          target/release/prismswitch keyd-config

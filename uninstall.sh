@@ -11,5 +11,5 @@ if [ -f /etc/keyd/prismswitch.conf ]; then
     if systemctl is-active --quiet keyd.service; then keyd reload; fi
 fi
 rm -f /usr/local/bin/prismswitch /usr/local/libexec/prismswitch/SmcDumpKey /usr/local/share/icons/hicolor/scalable/apps/prismswitch.svg
-echo "Removed program and its bindings; configuration preserved in /etc/prismswitch."
-echo "keyd and other system packages have not been removed."
+rm -f /usr/local/share/prismswitch/BUILDINFO /usr/local/share/prismswitch/SHA256SUMS
+echo "Removed program and its bindings; saved configuration and system packages preserved."

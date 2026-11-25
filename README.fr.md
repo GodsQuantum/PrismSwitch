@@ -10,6 +10,7 @@
 - Raccourcis personnalisables, même sur l'écran de connexion grâce à keyd.
 - Profils d'économie réversibles : plafond CPU, turbo, pause de services utilisateur choisis, extinction DPMS interne optionnelle.
 - Assistant de configuration en terminal, commandes SSH de récupération, verrouillage des accès SMC et restauration des paramètres d'origine.
+- Contrôleur Rust natif, petit helper C SMC amont inchangé, aucun runtime Python.
 - Aucun compte, serveur, télémétrie ou boucle de surveillance.
 
 ## Compatibilité et preuves
@@ -21,22 +22,22 @@
 | iMac10,1 | Expérimental ; uniquement si une dalle native 2560 × 1440 est détectée. |
 | TDM Thunderbolt 2011–2014, 21,5″, Retina et ultérieurs | Non pris en charge par ce contrôleur. |
 
-Linux x86-64, systemd, applesmc et son ABI d'indexation SMC, Python 3.9+, GCC et une source DisplayPort native compatible. DPMS : KDE Wayland avec kscreen-doctor ou X11 avec xset. Gardez un accès SSH pour la récupération. La forme Mini DisplayPort du connecteur ne garantit pas la compatibilité.
+Linux x86-64, systemd, applesmc et son ABI d'indexation SMC, Rust 1.85+ (build only), GCC et une source DisplayPort native compatible. DPMS : KDE Wayland avec kscreen-doctor ou X11 avec xset. Gardez un accès SSH pour la récupération. La forme Mini DisplayPort du connecteur ne garantit pas la compatibilité.
 
-**Version 0.1.0 de prévisualisation :** le déploiement précédent a fonctionné sur une machine. Le nouveau contrôleur portable n'est pas encore certifié de bout en bout. Aucune promesse de coupure électrique du GPU, de veille forcée du SSD, d'économie mesurée en watts ou de restitution audio universelle.
+**Version 0.2.0 de prévisualisation :** le déploiement précédent a fonctionné sur une machine. Le nouveau contrôleur portable n'est pas encore certifié de bout en bout. Aucune promesse de coupure électrique du GPU, de veille forcée du SSD, d'économie mesurée en watts ou de restitution audio universelle.
 
 ## Installation
 
-Installez Python, GCC, les outils systemd et util-linux, ainsi que [keyd](https://github.com/rvaiya/keyd) pour les raccourcis (paquet extra sous Arch/CachyOS).
+Installez Rust/Cargo, GCC, les outils systemd et util-linux, ainsi que [keyd](https://github.com/rvaiya/keyd) pour les raccourcis (paquet extra sous Arch/CachyOS).
 
 ```sh
 git clone https://github.com/GodsQuantum/PrismSwitch.git
 cd PrismSwitch
-sudo ./install.sh
+./install.sh
 sudo prismswitch configure
 ```
 
-L'installation ne bascule pas l'écran, n'installe pas de paquets et préserve la configuration existante. En présence d'autres fichiers keyd, utilisez configure --no-hotkeys et fusionnez manuellement les raccourcis générés par prismswitch keyd-config.
+La compilation s'effectue sans privilèges et produit un binaire natif et un reçu SHA-256. Pour un build existant : sudo ./install.sh --prebuilt. L'installation ne bascule pas l'écran, n'installe pas de paquets et préserve la configuration existante. En présence d'autres fichiers keyd, utilisez configure --no-hotkeys et fusionnez manuellement les raccourcis générés par prismswitch keyd-config.
 
 ## Raccourcis
 
@@ -59,6 +60,7 @@ Voir [l'exemple de configuration](config.example.json) et le [guide technique](d
 | prismswitch kick | Réinitialiser la liaison par off / 3 s / on |
 | prismswitch restore | Restaurer l'énergie sans changer l'entrée |
 | prismswitch configure | Assistant interactif |
+| prismswitch hotkeys-install | Appliquer les raccourcis enregistrés et validés |
 | prismswitch validate | Valider la configuration |
 | prismswitch keyd-config | Afficher les raccourcis générés |
 
@@ -68,7 +70,7 @@ Désinstallation : sudo ./uninstall.sh. Les paquets système, les autres réglag
 
 ## Développement
 
-python3 -m unittest discover -s tests -v et shellcheck install.sh uninstall.sh. Les tests matériels restent distincts des tests CI.
+cargo test --locked et shellcheck build.sh install.sh uninstall.sh. Les tests matériels restent distincts des tests CI.
 
 [Guide technique](docs/TECHNICAL.md) · [Kit graphique](branding/PRESSKIT.md) · [README amont](docs/UPSTREAM_README.md) · [Licences et crédits](NOTICE.md)
 

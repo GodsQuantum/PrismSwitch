@@ -6,7 +6,7 @@
 <p align="center"><a href="README.md">English</a> · <a href="README.fr.md">Français</a> · <a href="README.zh-CN.md">简体中文</a></p>
 <p align="center">
   <a href="https://github.com/GodsQuantum/PrismSwitch/actions/workflows/ci.yml"><img alt="Linux checks" src="https://github.com/GodsQuantum/PrismSwitch/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="Preview" src="https://img.shields.io/badge/status-0.1.0%20preview-14283A">
+  <img alt="Preview" src="https://img.shields.io/badge/status-0.2.0%20preview-14283A">
   <img alt="Linux x86-64" src="https://img.shields.io/badge/platform-Linux%20x86--64-58D6C5">
   <a href="LICENSE"><img alt="GPL-2.0" src="https://img.shields.io/badge/license-GPL--2.0-0B1622"></a>
 </p>
@@ -19,6 +19,7 @@ Switch the physical display input, not a remote desktop stream. PrismSwitch buil
 - Customizable keyboard shortcuts, including at the login screen with **keyd**.
 - Multiple reversible power profiles: CPU cap, turbo control, optional local user-service pausing and optional internal DPMS blanking.
 - Terminal setup wizard, SSH recovery commands, serialized SMC access, readback and rollback.
+- Native Rust controller; the original small C SMC helper is retained unchanged. No Python runtime.
 - Local operation without a cloud account, server, polling loop or telemetry.
 
 ## Compatibility and evidence
@@ -30,22 +31,22 @@ Switch the physical display input, not a remote desktop stream. PrismSwitch buil
 | iMac10,1 | Experimental, opt-in only with native 2560 × 1440 panel detection. |
 | 2011–2014 Thunderbolt TDM, 21.5-inch, Retina and later models | Not supported by this controller. |
 
-Linux x86-64, systemd, applesmc key-index sysfs ABI, Python 3.9+, GCC and a compatible native DP source/cable are required. The optional DPMS integration targets KDE Wayland or X11 with the corresponding tools. Keep SSH access available for recovery. Do not assume hardware compatibility merely because an iMac has a Mini DisplayPort-shaped connector.
+Linux x86-64, systemd, applesmc key-index sysfs ABI, Rust 1.85+ (build only), GCC and a compatible native DP source/cable are required. The optional DPMS integration targets KDE Wayland or X11 with the corresponding tools. Keep SSH access available for recovery. Do not assume hardware compatibility merely because an iMac has a Mini DisplayPort-shaped connector.
 
 **Preview:** the original adapted deployment works on one machine. The portable controller is not yet fully hardware-certified. No claim of GPU electrical shutdown, SSD standby, measured watt savings or universally working audio.
 
 ## Install
 
-Install Python, GCC, systemd tools and util-linux. For hotkeys install [keyd](https://github.com/rvaiya/keyd) from your distribution or its official instructions. On Arch/CachyOS the package is available in extra. KDE Wayland DPMS needs kscreen-doctor; X11 DPMS needs xset.
+Install Rust/Cargo, GCC, systemd tools and util-linux. For hotkeys install [keyd](https://github.com/rvaiya/keyd) from your distribution or its official instructions. On Arch/CachyOS the package is available in extra. KDE Wayland DPMS needs kscreen-doctor; X11 DPMS needs xset.
 
 ```sh
 git clone https://github.com/GodsQuantum/PrismSwitch.git
 cd PrismSwitch
-sudo ./install.sh
+./install.sh
 sudo prismswitch configure
 ```
 
-The installer does not switch the display, install packages or change an existing configuration. Existing keyd configurations are never overwritten: use the wizard with --no-hotkeys and merge the output of prismswitch keyd-config into your own configuration. The keys must be received by the **iMac's** keyboard, not the external source computer.
+The unprivileged build creates a native binary and checksummed build receipt; only installation is elevated. For an existing build use sudo ./install.sh --prebuilt. The installer does not switch the display, install packages or change an existing configuration. Existing keyd configurations are never overwritten: use the wizard with --no-hotkeys and merge the output of prismswitch keyd-config into your own configuration. The keys must be received by the **iMac's** keyboard, not the external source computer.
 
 ## Default shortcuts
 
@@ -68,6 +69,7 @@ See [example configuration](config.example.json) and [technical guide](docs/TECH
 | prismswitch kick | Re-train by switching off, waiting three seconds, switching on |
 | prismswitch restore | Restore power settings without changing input |
 | prismswitch configure | Interactive setup |
+| prismswitch hotkeys-install | Apply validated saved keyd bindings |
 | prismswitch validate | Validate configuration |
 | prismswitch keyd-config | Print generated keyd bindings |
 
@@ -77,7 +79,7 @@ To uninstall, run sudo ./uninstall.sh from this checkout. The installer leaves s
 
 ## Development
 
-Run python3 -m unittest discover -s tests -v and shellcheck install.sh uninstall.sh. CI checks the C helper, Python controller and shell scripts; hardware tests are explicitly separate.
+Run cargo test --locked and shellcheck build.sh install.sh uninstall.sh. CI checks the C helper, Rust controller and shell scripts; hardware tests are explicitly separate.
 
 [Technical guide](docs/TECHNICAL.md) · [Brand kit](branding/PRESSKIT.md) · [Original upstream README](docs/UPSTREAM_README.md) · [License and credits](NOTICE.md)
 

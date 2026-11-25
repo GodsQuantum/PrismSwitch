@@ -2,7 +2,7 @@
 
 PrismSwitch is an independent fork of https://github.com/floe/smc_util, retaining its Git history.
 
-- New PrismSwitch controller, installer and tests: GPL-2.0-only.
+- New PrismSwitch Rust controller, build/installer scripts and tests: GPL-2.0-only.
 - SmcDumpKey.c: Gabriel L. Somlo (2014), with Linux applesmc driver code by N. Boichat and H. Rydberg; GPL version 2 per original header.
 - smc_util.c and smc_util.h: Alex Leigh (2012), GPL-2.0-or-later.
 - powermetrics.d: beltex, MIT as identified by its original header.

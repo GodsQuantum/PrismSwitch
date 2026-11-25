@@ -10,6 +10,7 @@
 - 可自定义快捷键，通过 keyd 可在登录界面使用。
 - 可恢复的多种节能配置：CPU 频率上限、Turbo 控制、选择性暂停用户服务，以及可选的内部 DPMS 熄屏。
 - 终端配置向导、SSH 恢复命令、串行化 SMC 访问、状态读回和回滚。
+- 原生 Rust 控制器，保留上游 C SMC 工具，无需 Python 运行时。
 - 无需云账户、网络服务、遥测或持续轮询。
 
 ## 兼容性与验证
@@ -21,9 +22,9 @@
 | iMac10,1 | 实验支持，仅允许检测到原生 2560 × 1440 面板的设备。 |
 | 2011–2014 年 Thunderbolt TDM、21.5 英寸、Retina 及更新机型 | 本控制器不支持。 |
 
-需要 Linux x86-64、systemd、applesmc 的 SMC 键索引 sysfs 接口、Python 3.9+、GCC 和兼容的原生 DP 信号源及线缆。KDE Wayland 的 DPMS 需要 kscreen-doctor，X11 需要 xset。请保留 SSH 连接以便恢复。接口形状相同不代表硬件兼容。
+需要 Linux x86-64、systemd、applesmc 的 SMC 键索引 sysfs 接口、Rust 1.85+ (build only)、GCC 和兼容的原生 DP 信号源及线缆。KDE Wayland 的 DPMS 需要 kscreen-doctor，X11 需要 xset。请保留 SSH 连接以便恢复。接口形状相同不代表硬件兼容。
 
-**0.1.0 预览版：** 旧部署已在一台设备上正常工作，新通用控制器尚未完成全部硬件认证。不承诺显卡完全断电、强制 SSD 休眠、实测功耗下降或所有设备均能正常播放声音。
+**0.2.0 预览版：** 旧部署已在一台设备上正常工作，新通用控制器尚未完成全部硬件认证。不承诺显卡完全断电、强制 SSD 休眠、实测功耗下降或所有设备均能正常播放声音。
 
 ## 安装
 
@@ -32,11 +33,11 @@
 ```sh
 git clone https://github.com/GodsQuantum/PrismSwitch.git
 cd PrismSwitch
-sudo ./install.sh
+./install.sh
 sudo prismswitch configure
 ```
 
-安装程序不会自动切换屏幕、安装系统软件包或覆盖现有配置。如果已有其他 keyd 配置，请使用 configure --no-hotkeys，并手动合并 prismswitch keyd-config 输出的绑定。
+构建过程使用普通用户权限，生成原生二进制文件和 SHA-256 校验记录。已有构建可使用 sudo ./install.sh --prebuilt。安装程序不会自动切换屏幕、安装系统软件包或覆盖现有配置。如果已有其他 keyd 配置，请使用 configure --no-hotkeys，并手动合并 prismswitch keyd-config 输出的绑定。
 
 ## 快捷键
 
@@ -59,6 +60,7 @@ sudo prismswitch configure
 | prismswitch kick | 切回内部，等待三秒，再切换外部 |
 | prismswitch restore | 恢复电源设置，不改变输入 |
 | prismswitch configure | 交互式配置 |
+| prismswitch hotkeys-install | 应用已保存并验证的快捷键 |
 | prismswitch validate | 验证配置 |
 | prismswitch keyd-config | 输出生成的快捷键配置 |
 
@@ -68,7 +70,7 @@ DisplayPort 可以传输音频。若外部信号源识别到显示器的数字�
 
 ## 开发
 
-运行 python3 -m unittest discover -s tests -v 与 shellcheck install.sh uninstall.sh。自动化测试与实际硬件验证分开。
+运行 cargo test --locked 与 shellcheck build.sh install.sh uninstall.sh。自动化测试与实际硬件验证分开。
 
 [技术指南](docs/TECHNICAL.md) · [品牌素材](branding/PRESSKIT.md) · [上游 README](docs/UPSTREAM_README.md) · [许可证与致谢](NOTICE.md)
 

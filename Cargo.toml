@@ -1,0 +1,19 @@
+[package]
+name = "prismswitch"
+version = "0.2.0"
+edition = "2021"
+rust-version = "1.85"
+license = "GPL-2.0-only"
+description = "Native Linux iMac Target Display Mode controller"
+repository = "https://github.com/GodsQuantum/PrismSwitch"
+
+[dependencies]
+anyhow = "1"
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
