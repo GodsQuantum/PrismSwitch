@@ -125,6 +125,12 @@ class FakeHardware(unittest.TestCase):
         ps.restore()
         self.assertFalse(self.state.exists())
 
+    def test_restore_command_does_not_depend_on_configuration(self):
+        lock = self.root / "lock"
+        with patch.object(ps, "LOCK", lock), patch.object(ps.os, "geteuid", return_value=0), patch.object(ps.sys, "argv", ["prismswitch", "restore"]), patch.object(ps, "load", side_effect=ps.Error("broken config")), patch.object(ps, "restore") as restore:
+            ps.main()
+            restore.assert_called_once()
+
     def test_unsupported_model_no_smc_write(self):
         self.write(self.sys / "class/dmi/id/product_name", "iMac18,3")
         with self.assertRaises(ps.Error):

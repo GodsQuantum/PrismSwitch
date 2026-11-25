@@ -433,6 +433,13 @@ def main():
     conf = sub.add_parser("configure")
     conf.add_argument("--no-hotkeys", action="store_true")
     args = parser.parse_args()
+    if args.command == "restore":
+        if os.geteuid() != 0:
+            raise Error("Use sudo prismswitch restore")
+        with LOCK.open("a") as f:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            restore()
+        return
     c = load()
     if args.command == "validate":
         print("Configuration valid")
@@ -446,9 +453,6 @@ def main():
         fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.command == "configure":
             configure(c, not args.no_hotkeys)
-            return
-        if args.command == "restore":
-            restore()
             return
         dev = device(c)
         current = mode_native(dev)

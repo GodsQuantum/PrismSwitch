@@ -6,6 +6,7 @@ cd "$(dirname "$0")"
 for tool in gcc python3 install systemctl loginctl runuser; do
     command -v "$tool" >/dev/null || { echo "Missing dependency: $tool"; exit 1; }
 done
+python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)' || { echo "Python 3.9 or newer is required"; exit 1; }
 # Prevent accidental migration over an active profile.
 [ ! -e /run/prismswitch/eco.json ] || { echo "Restore active profile first"; exit 1; }
 tmp=$(mktemp -d)
