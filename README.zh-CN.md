@@ -17,18 +17,18 @@
 
 | 机型 | 状态 |
 |---|---|
-| iMac11,1（2009 年末 27 英寸） | 旧部署已实机确认 2560 × 1440、约 60 Hz 正常显示；新控制器已通过真实 SMC 只读验证，完整切换仍待验证。 |
+| iMac11,1（2009 年末 27 英寸） | 旧部署已实机确认 2560 × 1440、约 60 Hz 正常显示。Rust 控制器已部署并通过双向 SMC 路由、keyd M/E 快捷键、CPU/DPMS 恢复和风扇自动控制的实机验证；新的视觉与音频确认仍待完成。 |
 | iMac11,3（2010 年中 27 英寸） | 上游原始方法曾验证；新控制器为实验支持，需明确启用。 |
 | iMac10,1 | 实验支持，仅允许检测到原生 2560 × 1440 面板的设备。 |
 | 2011–2014 年 Thunderbolt TDM、21.5 英寸、Retina 及更新机型 | 本控制器不支持。 |
 
-需要 Linux x86-64、systemd、applesmc 的 SMC 键索引 sysfs 接口、Rust 1.85+ (build only)、GCC 和兼容的原生 DP 信号源及线缆。KDE Wayland 的 DPMS 需要 kscreen-doctor，X11 需要 xset。请保留 SSH 连接以便恢复。接口形状相同不代表硬件兼容。
+需要 Linux x86-64、systemd、applesmc 的 SMC 键索引 sysfs 接口、Rust 1.85+（仅构建时）、GCC 和兼容的原生 DP 信号源及线缆。KDE Wayland 的 DPMS 需要 kscreen-doctor，X11 需要 xset。请保留 SSH 连接以便恢复。接口形状相同不代表硬件兼容。
 
-**0.2.0 预览版：** 旧部署已在一台设备上正常工作，新通用控制器尚未完成全部硬件认证。不承诺显卡完全断电、强制 SSD 休眠、实测功耗下降或所有设备均能正常播放声音。
+**0.2.0 预览版：** Rust 控制器已部署在一台 iMac11,1 上，并通过硬件路由与恢复测试；其他机型及新的视觉和音频确认仍待验证。不承诺显卡完全断电、强制 SSD 休眠、实测功耗下降或所有设备均能正常播放声音。
 
 ## 安装
 
-安装 Python、GCC、systemd 工具和 util-linux。快捷键需要 [keyd](https://github.com/rvaiya/keyd)（Arch/CachyOS 的 extra 软件仓库提供）。
+安装 Rust/Cargo、GCC、systemd 工具和 util-linux。快捷键需要 [keyd](https://github.com/rvaiya/keyd)（Arch/CachyOS 的 extra 软件仓库提供）。
 
 ```sh
 git clone https://github.com/GodsQuantum/PrismSwitch.git

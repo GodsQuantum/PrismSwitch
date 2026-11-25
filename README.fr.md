@@ -17,14 +17,14 @@
 
 | Modèle | État |
 |---|---|
-| iMac11,1, 27″ fin 2009 | Ancien déploiement validé visuellement en 2560 × 1440 ~60 Hz. Nouveau contrôleur : lecture SMC réelle validée ; basculement complet à qualifier. |
+| iMac11,1, 27″ fin 2009 | Ancien déploiement validé visuellement en 2560 × 1440 ~60 Hz. Contrôleur Rust déployé : routage bidirectionnel, raccourcis keyd M/E, restauration CPU/DPMS et ventilation SMC automatique vérifiés sur la machine. Nouvelle confirmation visuelle/audio en attente. |
 | iMac11,3, 27″ mi-2010 | Technique amont testée ; nouveau contrôleur expérimental sur activation explicite. |
 | iMac10,1 | Expérimental ; uniquement si une dalle native 2560 × 1440 est détectée. |
 | TDM Thunderbolt 2011–2014, 21,5″, Retina et ultérieurs | Non pris en charge par ce contrôleur. |
 
-Linux x86-64, systemd, applesmc et son ABI d'indexation SMC, Rust 1.85+ (build only), GCC et une source DisplayPort native compatible. DPMS : KDE Wayland avec kscreen-doctor ou X11 avec xset. Gardez un accès SSH pour la récupération. La forme Mini DisplayPort du connecteur ne garantit pas la compatibilité.
+Linux x86-64, systemd, applesmc et son ABI d'indexation SMC, Rust 1.85+ (compilation uniquement), GCC et une source DisplayPort native compatible. DPMS : KDE Wayland avec kscreen-doctor ou X11 avec xset. Gardez un accès SSH pour la récupération. La forme Mini DisplayPort du connecteur ne garantit pas la compatibilité.
 
-**Version 0.2.0 de prévisualisation :** le déploiement précédent a fonctionné sur une machine. Le nouveau contrôleur portable n'est pas encore certifié de bout en bout. Aucune promesse de coupure électrique du GPU, de veille forcée du SSD, d'économie mesurée en watts ou de restitution audio universelle.
+**Version 0.2.0 de prévisualisation :** le contrôleur Rust est déployé et les tests matériels de routage et de restauration réussissent sur un iMac11,1. La compatibilité élargie et une nouvelle confirmation visuelle/audio restent à vérifier. Aucune promesse de coupure électrique du GPU, de veille forcée du SSD, d'économie mesurée en watts ou de restitution audio universelle.
 
 ## Installation
 

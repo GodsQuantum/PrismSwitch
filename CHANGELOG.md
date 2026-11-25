@@ -7,6 +7,7 @@
 - Added automatic fan safety checks, explicit recovery, signal-aware transactions, native build receipts and configurable keyd application.
 - Verified real CPUFreq asynchronous readback on iMac11,1; bounded readback waits and final transaction verification.
 - Preserved normal/eco shortcuts, custom profiles, internal DPMS recovery and exact rollback.
+- Deployed on iMac11,1; five real keyd/uinput shortcut transitions passed with SMC/DPMS readback and automatic fans verified. 25 unit tests pass. Fresh visual/audio verification remains pending.
 
 ## 0.1.0 — preview
 

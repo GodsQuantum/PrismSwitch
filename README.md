@@ -26,14 +26,14 @@ Switch the physical display input, not a remote desktop stream. PrismSwitch buil
 
 | Model | Status |
 |---|---|
-| iMac11,1 (27-inch, late 2009) | Prior deployment physically verified at 2560 × 1440 ~60 Hz. New controller read-only SMC verified; end-to-end switching pending. |
+| iMac11,1 (27-inch, late 2009) | Prior deployment visually verified at 2560 × 1440 ~60 Hz. Rust controller deployed: both routing directions, keyd M/E sequences, CPU/DPMS restoration and automatic SMC fans verified on hardware. Fresh visual/audio confirmation pending. |
 | iMac11,3 (27-inch, mid 2010) | Original upstream technique tested; new controller experimental, opt-in. |
 | iMac10,1 | Experimental, opt-in only with native 2560 × 1440 panel detection. |
 | 2011–2014 Thunderbolt TDM, 21.5-inch, Retina and later models | Not supported by this controller. |
 
 Linux x86-64, systemd, applesmc key-index sysfs ABI, Rust 1.85+ (build only), GCC and a compatible native DP source/cable are required. The optional DPMS integration targets KDE Wayland or X11 with the corresponding tools. Keep SSH access available for recovery. Do not assume hardware compatibility merely because an iMac has a Mini DisplayPort-shaped connector.
 
-**Preview:** the original adapted deployment works on one machine. The portable controller is not yet fully hardware-certified. No claim of GPU electrical shutdown, SSD standby, measured watt savings or universally working audio.
+**Preview:** the Rust controller is deployed and hardware routing/rollback tests pass on one iMac11,1. Broader model coverage and fresh visual/audio confirmation remain pending. No claim of GPU electrical shutdown, SSD standby, measured watt savings or universally working audio.
 
 ## Install
 

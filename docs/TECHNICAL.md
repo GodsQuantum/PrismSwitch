@@ -21,8 +21,10 @@ Use sudo prismswitch restore to recover power settings. Do not delete the runtim
 ## Supported evidence
 
 - Prior, machine-specific implementation on iMac11,1: external DP image physically confirmed by the owner, EDID 256 bytes, 2560×1440 at 59.95 Hz and stable fan control. CPU cap and rollback tested.
-- New portable controller: Rust unit tests with fake hardware, failure injection, fan checks, locking and selector restoration; upstream C helper built; shell syntax checks. Live evidence is recorded separately below.
-- Pending: new controller installation and full bidirectional physical switching, profile enter/exit on actual hardware, physical hotkeys and audible audio. No claims of watt savings.
+- New portable controller: 25 Rust tests with fake hardware, failure injection, fan checks, locking, selector restoration and asynchronous CPUFreq readback; native C helper built; shell checks and GitHub CI pass.
+- 2026-11-25, iMac11,1 / CachyOS / KDE Wayland: Rust binary installed. Real keyd events injected through a temporary Linux uinput keyboard exercised five transitions: M external eco → internal normal → external normal; E external normal → external eco → internal normal → external eco. SMC readback, internal DPMS, CPU policy, boost, Syncthing restoration and all three automatic fan floors passed. This is a real hardware/controller test, not visual confirmation of pixels or a physical keyboard test.
+- Median SMC status latency (five sequential reads per controller on the same iMac): previous Bash 408.29 ms, Rust 11.42 ms. This measures status reads, not DP negotiation. A real CPUFreq transition exposed delayed sysfs readback (5.26 ms); the controller now waits for the effective value with a bounded timeout.
+- Pending: fresh visual confirmation after migration, physical keyboard and audible audio, additional models. No claims of watt savings.
 - Mid-2010 technique: original floe/smc_util README, not an independent certification of this release.
 
 See upstream README and source history. No Thunderbolt TDM implementation.
