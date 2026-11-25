@@ -8,7 +8,7 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
     sync::atomic::{AtomicBool, Ordering},
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 static INTERRUPTED: AtomicBool = AtomicBool::new(false);
 extern "C" fn interrupted(_: libc::c_int) {
@@ -48,10 +48,34 @@ pub fn write(p: impl AsRef<Path>, v: impl AsRef<str>) -> Result<()> {
     let p = p.as_ref();
     fs::write(p, format!("{}\n", v.as_ref())).with_context(|| format!("write {}", p.display()))
 }
+// CPUFreq QoS updates can become visible asynchronously. Write once, then
+// verify the effective kernel value with a bounded wait; never force a retry.
+pub fn wait_value(
+    mut read_value: impl FnMut() -> Result<String>,
+    expected: &str,
+    timeout: Duration,
+) -> Result<()> {
+    let start = Instant::now();
+    loop {
+        let actual = read_value()?;
+        if actual == expected {
+            return Ok(());
+        }
+        ensure!(
+            start.elapsed() < timeout,
+            "readback mismatch: expected {expected}, got {actual}"
+        );
+        std::thread::sleep(Duration::from_millis(5));
+    }
+}
+pub fn verify(p: &Path, v: &str) -> Result<()> {
+    wait_value(|| read(p), v, Duration::from_secs(2))
+        .with_context(|| format!("effective value of {}", p.display()))
+}
 pub fn set(p: &Path, v: &str) -> Result<()> {
     if read(p)? != v {
         write(p, v)?;
-        ensure!(read(p)? == v, "readback mismatch: {}", p.display());
+        verify(p, v)?;
     }
     Ok(())
 }
@@ -170,6 +194,24 @@ pub fn user_active(user: &str, service: &str) -> Result<bool> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn asynchronous_readback() {
+        let mut count = 0;
+        wait_value(
+            || {
+                count += 1;
+                Ok(if count < 3 { "old" } else { "new" }.into())
+            },
+            "new",
+            Duration::from_millis(100),
+        )
+        .unwrap();
+        assert_eq!(count, 3);
+    }
+    #[test]
+    fn readback_timeout() {
+        assert!(wait_value(|| Ok("old".into()), "new", Duration::from_millis(10)).is_err());
+    }
     #[test]
     fn exclusive_lock() {
         let path =

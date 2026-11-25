@@ -166,6 +166,14 @@ fn restore_with(sys: &Path, path: &Path, ops: &mut impl Ops) -> Result<()> {
             errors.push(format!("{}: {e:#}", p.display()));
         }
     }
+    // A later policy update (including boost) may affect an earlier one.
+    for (p, v) in &s.settings {
+        if p.starts_with(sys.join("devices/system/cpu/cpufreq")) {
+            if let Err(e) = verify(p, v) {
+                errors.push(format!("final rollback verification: {e:#}"));
+            }
+        }
+    }
     for service in &s.services {
         if !crate::config::service_name(service) {
             errors.push(format!("invalid recovery unit {service}"));
@@ -232,6 +240,10 @@ fn apply_with(sys: &Path, path: &Path, c: &Config, name: &str, ops: &mut impl Op
         for (p, v) in &ch {
             check_interrupt()?;
             ops.set(p, v)?;
+        }
+        for (p, v) in &ch {
+            check_interrupt()?;
+            verify(p, v)?;
         }
         if s.dpms.as_deref() == Some("on") {
             check_interrupt()?;
