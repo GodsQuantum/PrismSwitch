@@ -3,3 +3,9 @@ xcuserdata
 smc_util
 smc_util.dSYM/
 SmcDumpKey
+
+# PrismSwitch build/test caches
+__pycache__/
+*.pyc
+.coverage
+.pytest_cache/

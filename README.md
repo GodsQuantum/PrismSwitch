@@ -1,29 +1,84 @@
-# smc_util
-Apple System Management Control (SMC) utility
+<p align="center"><img src="branding/banner.svg" width="100%" alt="PrismSwitch — Two inputs. One screen."></p>
 
-Forked from original smc_util repository, with a couple of other, slightly modified, SMC-related tools:
-* powermetrics.d from https://gist.github.com/beltex/acbbeef815a7be938abf
-* SmcDumpKey.c from https://www.contrib.andrew.cmu.edu/~somlo/OSXKVM/
+<h1 align="center">PrismSwitch</h1>
+<p align="center"><strong>Two inputs. One screen.</strong><br>Bring a compatible vintage iMac back to life as a DisplayPort monitor under Linux.</p>
 
-# How to use
+<p align="center"><a href="README.md">English</a> · <a href="README.fr.md">Français</a> · <a href="README.zh-CN.md">简体中文</a></p>
+<p align="center">
+  <a href="https://github.com/GodsQuantum/PrismSwitch/actions/workflows/ci.yml"><img alt="Linux checks" src="https://github.com/GodsQuantum/PrismSwitch/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="Preview" src="https://img.shields.io/badge/status-0.1.0%20preview-14283A">
+  <img alt="Linux x86-64" src="https://img.shields.io/badge/platform-Linux%20x86--64-58D6C5">
+  <a href="LICENSE"><img alt="GPL-2.0" src="https://img.shields.io/badge/license-GPL--2.0-0B1622"></a>
+</p>
 
-Chances are you're here because of my [blog post](https://floe.butterbrot.org/matrix/hacking/tdm/) or [SO question](https://stackoverflow.com/questions/43491594/reverse-engineering-the-target-display-mode-on-an-imac/), and want to use this to turn an old iMac running Linux into a display.
+## Give your display a second life
 
-_Note_: This was tested on a mid-2010 27" iMac running Yosemite and Ubuntu 16.04. Any other model/OS combo might behave differently.
+Switch the physical display input, not a remote desktop stream. PrismSwitch builds on Florian Echtler's SMC reverse engineering and the original Linux SMC utility.
 
-_Note_: I don't have the iMac I used for this anymore, so I can't test anything, sorry. That being said, the steps to use this are (on Ubuntu and derivatives):
+- Normal switching between the iMac's own GPU and an external Mini DisplayPort source.
+- Customizable keyboard shortcuts, including at the login screen with **keyd**.
+- Multiple reversible power profiles: CPU cap, turbo control, optional local user-service pausing and optional internal DPMS blanking.
+- Terminal setup wizard, SSH recovery commands, serialized SMC access, readback and rollback.
+- Local operation without a cloud account, server, polling loop or telemetry.
 
+## Compatibility and evidence
+
+| Model | Status |
+|---|---|
+| iMac11,1 (27-inch, late 2009) | Prior deployment physically verified at 2560 × 1440 ~60 Hz. New controller read-only SMC verified; end-to-end switching pending. |
+| iMac11,3 (27-inch, mid 2010) | Original upstream technique tested; new controller experimental, opt-in. |
+| iMac10,1 | Experimental, opt-in only with native 2560 × 1440 panel detection. |
+| 2011–2014 Thunderbolt TDM, 21.5-inch, Retina and later models | Not supported by this controller. |
+
+Linux x86-64, systemd, applesmc key-index sysfs ABI, Python 3.9+, GCC and a compatible native DP source/cable are required. The optional DPMS integration targets KDE Wayland or X11 with the corresponding tools. Keep SSH access available for recovery. Do not assume hardware compatibility merely because an iMac has a Mini DisplayPort-shaped connector.
+
+**Preview:** the original adapted deployment works on one machine. The portable controller is not yet fully hardware-certified. No claim of GPU electrical shutdown, SSD standby, measured watt savings or universally working audio.
+
+## Install
+
+Install Python, GCC, systemd tools and util-linux. For hotkeys install [keyd](https://github.com/rvaiya/keyd) from your distribution or its official instructions. On Arch/CachyOS the package is available in extra. KDE Wayland DPMS needs kscreen-doctor; X11 DPMS needs xset.
+
+```sh
+git clone https://github.com/GodsQuantum/PrismSwitch.git
+cd PrismSwitch
+sudo ./install.sh
+sudo prismswitch configure
 ```
-sudo apt-get install build-essential
 
-git clone https://github.com/floe/smc_util.git
-cd smc_util
+The installer does not switch the display, install packages or change an existing configuration. Existing keyd configurations are never overwritten: use the wizard with --no-hotkeys and merge the output of prismswitch keyd-config into your own configuration. The keys must be received by the **iMac's** keyboard, not the external source computer.
 
-gcc -O2 -o SmcDumpKey SmcDumpKey.c -Wall
-sudo rmmod applesmc # remove the SMC kernel driver to avoid conflicts
+## Default shortcuts
 
-sudo ./tdm_on.sh # enable target display mode
-sudo ./tdm_off.sh # disable target display mode
-```
+| Shortcut | Behavior |
+|---|---|
+| Ctrl+Alt+M | Normal display toggle; restore any active power profile first. |
+| Ctrl+Alt+E | Activate the external eco profile; press again to return to internal and restore settings. |
 
-__IMPORTANT__: when you run `tdm_on.sh` and it works on your iMac, then the display will switch over to the DP input and you won't have the console anymore. Make sure you have a remote shell open first, or maybe a keyboard hotkey set up, so you can also run `tdm_off.sh` again to switch back to the internal iMac graphics.
+Create additional named profiles and choose their shortcuts in the wizard. CPU range percentage is relative to the original allowed range: 0 is the minimum, 100 retains the current cap. Power settings are stored temporarily under /run and restored on exit. Only explicitly selected non-root user services can be paused. System sleep is inhibited while a profile is active. Actual energy use depends on hardware.
+
+See [example configuration](config.example.json) and [technical guide](docs/TECHNICAL.md) for details.
+
+## CLI
+
+| Command (sudo) | Action |
+|---|---|
+| prismswitch on / off / toggle | Select external / internal / toggle normally |
+| prismswitch profile eco | Toggle a named power profile |
+| prismswitch status | Read SMC routing request and controller profile |
+| prismswitch kick | Re-train by switching off, waiting three seconds, switching on |
+| prismswitch restore | Restore power settings without changing input |
+| prismswitch configure | Interactive setup |
+| prismswitch validate | Validate configuration |
+| prismswitch keyd-config | Print generated keyd bindings |
+
+DisplayPort can also carry audio. If the source detects an audio-capable display, select its digital HDMI/DP audio sink in the source desktop's sound settings. The routing controller does not change audio devices or verify speaker output.
+
+To uninstall, run sudo ./uninstall.sh from this checkout. The installer leaves system packages, other keyd configuration, current input and saved PrismSwitch configuration alone.
+
+## Development
+
+Run python3 -m unittest discover -s tests -v and shellcheck install.sh uninstall.sh. CI checks the C helper, Python controller and shell scripts; hardware tests are explicitly separate.
+
+[Technical guide](docs/TECHNICAL.md) · [Brand kit](branding/PRESSKIT.md) · [Original upstream README](docs/UPSTREAM_README.md) · [License and credits](NOTICE.md)
+
+Independent GPL-2.0-only controller and fork of [floe/smc_util](https://github.com/floe/smc_util). Original files retain their respective licenses. No affiliation with Apple or upstream endorsement.

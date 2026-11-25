@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 180" role="img" aria-labelledby="title">
+  <title id="title">PrismSwitch — Two inputs. One screen.</title>
+  <rect width="820" height="180" rx="28" fill="#0B1622"/>
+  <g transform="translate(22 26)">
+    <rect x="4" y="4" width="120" height="120" rx="29" fill="#14283A"/>
+    <path d="M25 33H103V86H25Z" fill="#0B1622" stroke="#AFC5C7" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M64 86V99M48 99H80" fill="none" stroke="#AFC5C7" stroke-width="5" stroke-linecap="round"/>
+    <path d="M29 46H45L64 60" stroke="#58D6C5" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M29 74H45L64 60" stroke="#A9A3FF" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <path d="M64 60H98" stroke="#EAF8F5" stroke-width="7" stroke-linecap="round"/>
+    <path d="M64 48L76 60 64 72 52 60Z" fill="#58D6C5" stroke="#0B1622" stroke-width="3"/>
+  </g>
+  <text x="170" y="86" font-family="system-ui, sans-serif" font-weight="700" font-size="59" letter-spacing="-2" fill="#EAF8F5">Prism<tspan fill="#58D6C5">Switch</tspan></text>
+  <text x="173" y="122" font-family="system-ui, sans-serif" font-size="25" fill="#AFC5C7">Two inputs. One screen.</text>
+</svg>

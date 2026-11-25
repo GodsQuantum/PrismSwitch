@@ -1,0 +1,9 @@
+{
+  "allow_experimental": false,
+  "blank_internal": false,
+  "user": "",
+  "shortcuts": {"toggle": "Ctrl+Alt+M", "eco": "Ctrl+Alt+E"},
+  "profiles": {
+    "eco": {"cpu_percent": 0, "disable_boost": true, "pause_services": []}
+  }
+}

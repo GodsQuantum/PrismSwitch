@@ -1,0 +1,20 @@
+name: Linux checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build upstream SMC helper
+        run: gcc -O2 -Wall -o /tmp/SmcDumpKey SmcDumpKey.c
+      - name: Unit and rollback tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Shell scripts
+        run: shellcheck install.sh uninstall.sh
+      - name: CLI syntax
+        run: |
+          python3 -m py_compile prismswitch/prismswitch.py
+          python3 prismswitch/prismswitch.py validate
+          python3 prismswitch/prismswitch.py keyd-config

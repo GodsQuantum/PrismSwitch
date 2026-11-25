@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">PrismSwitch mark</title>
+  <rect x="4" y="4" width="120" height="120" rx="29" fill="#0B1622"/>
+  <path d="M25 33H103V86H25Z" fill="#14283A" stroke="#AFC5C7" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M64 86V99M48 99H80" fill="none" stroke="#AFC5C7" stroke-width="5" stroke-linecap="round"/>
+  <path d="M29 46H45L64 60" stroke="#58D6C5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M29 74H45L64 60" stroke="#A9A3FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M64 60H98" stroke="#EAF8F5" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M64 48L76 60 64 72 52 60Z" fill="#58D6C5" stroke="#0B1622" stroke-width="3"/>
+</svg>
